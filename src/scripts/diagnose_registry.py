@@ -131,8 +131,33 @@ def main():
     
     console.print(table)
     
+    # Check HKCU for conflicting entries (can cause empty Utilities/Shortcuts submenus)
+    console.print("\n[bold]3. COMMANDSTORE (HKCU) - Check for conflicts[/bold]")
+    hkcu_subkeys = []
+    try:
+        with winreg.OpenKey(
+            winreg.HKEY_CURRENT_USER, commandstore_base, 0,
+            winreg.KEY_READ | winreg.KEY_WOW64_64KEY
+        ) as key:
+            i = 0
+            while True:
+                try:
+                    hkcu_subkeys.append(winreg.EnumKey(key, i))
+                    i += 1
+                except OSError:
+                    break
+    except FileNotFoundError:
+        pass
+    zilkit_hkcu = [k for k in hkcu_subkeys if k.startswith("ZilKit")]
+    if zilkit_hkcu:
+        console.print(f"  [yellow]Found {len(zilkit_hkcu)} ZilKit keys in HKCU - may conflict with HKLM![/yellow]")
+        console.print("  Duplicate entries in both hives can cause empty Utilities/Shortcuts submenus.")
+        console.print("  [bold]Fix:[/bold] Run uninstall.bat, then install.bat (as Administrator)")
+    else:
+        console.print("  [green]No ZilKit keys in HKCU (good)[/green]")
+    
     # Summary
-    console.print("\n[bold]3. DIAGNOSIS[/bold]")
+    console.print("\n[bold]4. DIAGNOSIS[/bold]")
     
     # Check for common issues
     issues = []
@@ -167,11 +192,13 @@ def main():
         for issue in issues:
             console.print(f"  [red]*[/red] {issue}")
     else:
-        console.print("[green]All expected registry keys exist![/green]")
-        console.print("\n[yellow]If menus still don't appear, try:[/yellow]")
-        console.print("  1. Run uninstall.py as Administrator")
-        console.print("  2. Restart Windows Explorer (or log out/in)")
-        console.print("  3. Run install.py as Administrator")
+        console.print("[green]All expected registry keys exist in HKLM![/green]")
+        if zilkit_hkcu:
+            console.print("\n[yellow]HKCU conflict detected - Utilities/Shortcuts may appear empty.[/yellow]")
+        console.print("\n[yellow]If menus still don't appear (empty Utilities/Shortcuts), try:[/yellow]")
+        console.print("  1. Run uninstall.bat as Administrator (removes HKLM + HKCU)")
+        console.print("  2. Restart Windows Explorer: taskkill /f /im explorer.exe && start explorer.exe")
+        console.print("  3. Run install.bat as Administrator")
         console.print("  4. Restart Windows Explorer again")
     
     console.print("\n[dim]Press any key to exit...[/dim]")

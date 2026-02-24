@@ -118,7 +118,10 @@ def _register_commandstore_submenus(python_exe: str, script_path: Path) -> None:
     to register submenu items. This prevents them from appearing as separate
     top-level menu items.
     
-    Also registers in HKEY_CURRENT_USER as a fallback for better compatibility.
+    Registers only in HKLM when running as admin. Registering in both HKLM and
+    HKCU can cause Windows to merge incorrectly, resulting in empty submenus
+    (Utilities/Shortcuts) even when registry keys exist. HKCU is used only as
+    a fallback when HKLM write fails (e.g. non-admin install).
     
     Pattern:
     - Main menu references submenu keys in SubCommands (e.g., "ZilKit.FFmpeg")
@@ -130,28 +133,28 @@ def _register_commandstore_submenus(python_exe: str, script_path: Path) -> None:
     
     logger.info("Registering CommandStore submenus...")
     
-    # Register in both HKEY_LOCAL_MACHINE and HKEY_CURRENT_USER for maximum compatibility
-    hives_to_register = [
-        (winreg.HKEY_LOCAL_MACHINE, "HKLM"),
-        (winreg.HKEY_CURRENT_USER, "HKCU"),
-    ]
-    
-    for hive, hive_name in hives_to_register:
-        logger.info(f"Registering in {hive_name}...")
-        try:
-            _register_commandstore_in_hive(hive, commandstore_base, python_exe, script_path)
-            logger.info(f"Successfully registered in {hive_name}")
-        except PermissionError:
-            if hive == winreg.HKEY_LOCAL_MACHINE:
-                logger.warning(f"Could not write to {hive_name} (admin required), trying HKCU only")
-            else:
-                raise
-        except Exception as e:
-            logger.error(f"Failed to register in {hive_name}: {e}")
-            if hive == winreg.HKEY_LOCAL_MACHINE:
-                logger.info("Continuing with HKCU registration...")
-            else:
-                raise
+    # Register in HKLM only when admin - duplicate HKCU entries can cause
+    # Windows to show empty submenus (Utilities/Shortcuts) due to merge conflicts.
+    # Use HKCU only as fallback when HKLM fails (non-admin).
+    try:
+        logger.info("Registering in HKLM...")
+        _register_commandstore_in_hive(
+            winreg.HKEY_LOCAL_MACHINE, commandstore_base, python_exe, script_path
+        )
+        logger.info("Successfully registered in HKLM")
+    except PermissionError:
+        logger.warning("Could not write to HKLM (admin required), trying HKCU only")
+        _register_commandstore_in_hive(
+            winreg.HKEY_CURRENT_USER, commandstore_base, python_exe, script_path
+        )
+        logger.info("Successfully registered in HKCU")
+    except Exception as e:
+        logger.error(f"Failed to register in HKLM: {e}")
+        logger.info("Trying HKCU as fallback...")
+        _register_commandstore_in_hive(
+            winreg.HKEY_CURRENT_USER, commandstore_base, python_exe, script_path
+        )
+        logger.info("Successfully registered in HKCU")
     
     logger.info("All CommandStore submenus registered successfully (FFmpeg, Utilities, Shortcuts)")
 
