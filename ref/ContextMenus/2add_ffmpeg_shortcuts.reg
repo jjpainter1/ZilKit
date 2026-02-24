@@ -1,0 +1,53 @@
+Windows Registry Editor Version 5.00
+; add_shortcuts/2add_ffmpeg_shortcuts.reg
+
+; Add FFmpeg to the JJs-MediaCraft context menu
+[HKEY_CLASSES_ROOT\Directory\Background\shell\JJs-MediaCraft]
+"SubCommands"="FFmpeg"
+
+; Define the FFmpeg context menu nested inside JJs-MediaCraft
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\FFmpeg]
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\FFmpeg.ico"
+"MUIVerb"="FFmpeg"
+;; "SubCommands"="py1;py2;py3;py4;py5"
+"SubCommands"="py1;py2;py3;py4"
+
+; Define the py1 FFmpeg command
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py1]
+@="Convert IMG Directory to Movie File"
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\Python.ico"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py1\command]
+@="\"C:\\JJs-MediaCraft\\core\\python-3.11.4.amd64\\python.exe\" \"C:\\JJs-MediaCraft\\src\\ffmpeg-launcher.py\" -img_dir \"%V\""
+
+; Define the py2 FFmpeg command
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py2]
+@="Convert IMG Sub-Directories to Movie File"
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\Python.ico"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py2\command]
+@="\"C:\\JJs-MediaCraft\\core\\python-3.11.4.amd64\\python.exe\" \"C:\\JJs-MediaCraft\\src\\ffmpeg-launcher.py\" -img_subdir \"%V\""
+
+; Define the py3 FFmpeg command
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py3]
+@="Convert Movies in Directory"
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\Python.ico"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py3\command]
+@="\"C:\\JJs-MediaCraft\\core\\python-3.11.4.amd64\\python.exe\" \"C:\\JJs-MediaCraft\\src\\ffmpeg-launcher.py\" -movies \"%V\""
+
+; Define the py4 FFmpeg command
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py4]
+@="EXR To MP4"
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\Python.ico"
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py4\command]
+@="\"C:\\JJs-MediaCraft\\core\\python-3.11.4.amd64\\python.exe\" \"C:\\JJs-MediaCraft\\src\\ffmpeg-launcher.py\" -exr_mp4 \"%V\""
+
+;; ; Define the py5 FFmpeg command
+;; [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py5]
+;; @="Set Up Watch Sub-Dirs"
+;; "Icon"="C:\\JJs-MediaCraft\\resources\\icons\\Python.ico"
+
+;; [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\py5\command]
+;; @="\"C:\\JJs-MediaCraft\\core\\python-3.11.4.amd64\\python.exe\" \"C:\\JJs-MediaCraft\\src\\ffmpeg_watch-folder.py\" --subdirs-only"

@@ -1,0 +1,8 @@
+Windows Registry Editor Version 5.00
+; add_shortcuts/1add_jjs-mediacraft_shortcut.reg
+
+; Define the JJs-MediaCraft context menu root
+[HKEY_CLASSES_ROOT\Directory\Background\shell\JJs-MediaCraft]
+"Icon"="C:\\JJs-MediaCraft\\resources\\icons\\jjs-mediacraft.ico"
+"MUIVerb"="JJs-MediaCraft"
+"SubCommands"=""

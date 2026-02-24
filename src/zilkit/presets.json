@@ -1,0 +1,88 @@
+{
+  "presets": {
+    "prores-422-proxy": {
+      "codec": "prores_ks",
+      "profile_v": "0",
+      "name": "ProRes422Proxy",
+      "display_name": "ProRes 422 Proxy",
+      "pix_fmt": "yuv422p10le",
+      "vendor": "apl0",
+      "suffix": "prores422proxy",
+      "container": "mov"
+    },
+    "prores-422-lt": {
+      "codec": "prores_ks",
+      "profile_v": "1",
+      "name": "ProRes422LT",
+      "display_name": "ProRes 422 LT",
+      "pix_fmt": "yuv422p10le",
+      "vendor": "apl0",
+      "suffix": "prores422lt",
+      "container": "mov"
+    },
+    "prores-422": {
+      "codec": "prores_ks",
+      "profile_v": "2",
+      "name": "ProRes422",
+      "display_name": "ProRes 422 Normal",
+      "pix_fmt": "yuv422p10le",
+      "vendor": "apl0",
+      "suffix": "prores422",
+      "container": "mov"
+    },
+    "prores-422-hq": {
+      "codec": "prores_ks",
+      "profile_v": "3",
+      "name": "ProRes422HQ",
+      "display_name": "ProRes 422 HQ",
+      "pix_fmt": "yuv422p10le",
+      "vendor": "apl0",
+      "suffix": "prores422hq",
+      "container": "mov"
+    },
+    "prores-4444": {
+      "codec": "prores_ks",
+      "profile_v": "4",
+      "name": "ProRes4444",
+      "display_name": "ProRes 4444 (Can Include Alpha)",
+      "pix_fmt": "yuva444p10le",
+      "vendor": "apl0",
+      "suffix": "prores4444",
+      "container": "mov"
+    },
+    "prores-4444-xq": {
+      "codec": "prores_ks",
+      "profile_v": "5",
+      "name": "ProRes4444XQ",
+      "display_name": "ProRes 4444 XQ (Can Include Alpha)",
+      "pix_fmt": "yuva444p10le",
+      "vendor": "apl0",
+      "suffix": "prores4444xq",
+      "container": "mov"
+    },
+    "hap": {
+      "codec": "hap",
+      "name": "HAP",
+      "display_name": "HAP (Can Include Alpha)",
+      "suffix": "hap",
+      "container": "mov"
+    },
+    "hap-q": {
+      "codec": "hap",
+      "name": "HAP_Q",
+      "display_name": "HAP Q (Can Include Alpha)",
+      "format": "hap_q",
+      "suffix": "hapq",
+      "container": "mov"
+    },
+    "h264-mp4": {
+      "codec": "libx264",
+      "name": "H.264",
+      "display_name": "H.264 MP4",
+      "format": "h264",
+      "pix_fmt": "yuv420p",
+      "suffix": "h264",
+      "container": "mp4"
+    }
+  }
+}
