@@ -76,9 +76,16 @@ echo  + WinGet is installed.
 echo.
 
 :: Update WinGet package sources (ensures we get latest versions)
-echo  Updating package list...
-winget source update >nul 2>&1
-echo  + Package list updated.
+set "UPDATE_WINGET="
+set /p "UPDATE_WINGET=  Update WinGet package list? (y/n, default y): "
+if /i "!UPDATE_WINGET!"=="" set "UPDATE_WINGET=y"
+if /i "!UPDATE_WINGET!"=="y" (
+    echo  Updating package list...
+    winget source update >nul 2>&1
+    echo  + Package list updated.
+) else (
+    echo  Skipping WinGet update.
+)
 echo.
 
 :: ============================================================
@@ -102,9 +109,18 @@ if "!PYTHON_CMD!"=="" (
 if "!PYTHON_CMD!"=="" (
     echo  X Python is not installed.
     echo.
-    echo  Installing Python 3.12 via WinGet...
+    set "INSTALL_PYTHON="
+    set /p "INSTALL_PYTHON=  Install Python 3.13 via WinGet? (y/n, default y): "
+    if /i "!INSTALL_PYTHON!"=="" set "INSTALL_PYTHON=y"
+    if /i "!INSTALL_PYTHON!" neq "y" (
+        echo.
+        echo  Python is required. Install manually from python.org and run this installer again.
+        goto :pause_exit
+    )
     echo.
-    winget install Python.Python.3.12 --accept-package-agreements --accept-source-agreements
+    echo  Installing Python 3.13 via WinGet...
+    echo.
+    winget install -e --id Python.Python.3.13 --scope machine --accept-package-agreements --accept-source-agreements
     if !errorlevel! neq 0 (
         echo.
         echo  X Installation failed. You may need to install Python manually from python.org
@@ -138,9 +154,18 @@ ffmpeg -version >nul 2>&1
 if %errorlevel% neq 0 (
     echo  X FFmpeg is not installed.
     echo.
+    set "INSTALL_FFMPEG="
+    set /p "INSTALL_FFMPEG=  Install FFmpeg (full build) via WinGet? (y/n, default y): "
+    if /i "!INSTALL_FFMPEG!"=="" set "INSTALL_FFMPEG=y"
+    if /i "!INSTALL_FFMPEG!" neq "y" (
+        echo.
+        echo  FFmpeg is required. Install manually from ffmpeg.org and run this installer again.
+        goto :pause_exit
+    )
+    echo.
     echo  Installing FFmpeg via WinGet...
     echo.
-    winget install Gyan.FFmpeg --accept-package-agreements --accept-source-agreements
+    winget install -e --id Gyan.FFmpeg --scope machine --accept-package-agreements --accept-source-agreements
     if !errorlevel! neq 0 (
         echo.
         echo  X Installation failed. You may need to install FFmpeg manually from ffmpeg.org
