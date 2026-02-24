@@ -42,7 +42,7 @@ def register_context_menu(
     python_exe: Optional[str] = None,
     script_path: Optional[Path] = None,
 ) -> bool:
-    """Register ZilKit in Windows context menu using CommandStore pattern.
+    r"""Register ZilKit in Windows context menu using CommandStore pattern.
     
     Creates the following structure:
     HKEY_CLASSES_ROOT\Directory\Background\shell\ZilKit
@@ -112,7 +112,7 @@ def _create_key_with_access(hkey, path):
 
 
 def _register_commandstore_submenus(python_exe: str, script_path: Path) -> None:
-    """Register all submenus using CommandStore pattern for proper nesting.
+    r"""Register all submenus using CommandStore pattern for proper nesting.
     
     Uses HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell
     to register submenu items. This prevents them from appearing as separate
