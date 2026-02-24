@@ -93,3 +93,22 @@ The following are excluded from the repo:
 - Build artifacts: `build/`, `dist/`
 - Logs: `*.log`, `logs/`
 - Dropbox conflicted copies: `*conflicted*`
+
+
+
+## Pushing Changes To GitHub
+
+**Initialize**
+git status
+
+**Check what changed**
+git status
+
+**Stage the changes**
+git add .
+
+**Commit With A Message**
+git commit -m "Add yes/no prompts for install components, update Python to 3.13, improve FFmpeg install"
+
+**Push to GitHub**
+git push

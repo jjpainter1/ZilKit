@@ -54,6 +54,9 @@ echo  This will install ZilKit and add it to your right-click context menu.
 echo  We'll check for required tools and install them if needed.
 echo.
 
+:: Track if we install anything that requires a PATH refresh (restart needed)
+set "NEED_RESTART=0"
+
 :: ============================================================
 :: Step 1: Verify WinGet is installed and up to date
 :: ============================================================
@@ -110,7 +113,7 @@ if "!PYTHON_CMD!"=="" (
     echo  X Python is not installed.
     echo.
     set "INSTALL_PYTHON="
-    set /p "INSTALL_PYTHON=  Install Python 3.13 via WinGet? (y/n, default y): "
+    set /p "INSTALL_PYTHON=  Install Python 3.14 via WinGet? (y/n, default y): "
     if /i "!INSTALL_PYTHON!"=="" set "INSTALL_PYTHON=y"
     if /i "!INSTALL_PYTHON!" neq "y" (
         echo.
@@ -118,30 +121,22 @@ if "!PYTHON_CMD!"=="" (
         goto :pause_exit
     )
     echo.
-    echo  Installing Python 3.13 via WinGet...
+    echo  Installing Python 3.14 via WinGet...
     echo.
-    winget install -e --id Python.Python.3.13 --scope machine --accept-package-agreements --accept-source-agreements
+    winget install -e --id Python.Python.3.14 --scope machine --accept-package-agreements --accept-source-agreements
     if !errorlevel! neq 0 (
         echo.
         echo  X Installation failed. You may need to install Python manually from python.org
         goto :pause_exit
     )
-    echo.
-    echo  ============================================
-    echo    IMPORTANT - Please read this
-    echo  ============================================
-    echo.
-    echo  Python was just installed. Windows needs to refresh its settings
-    echo  before we can continue.
-    echo.
-    echo  Please:
-    echo    1. CLOSE this window completely
-    echo    2. Double-click install.bat again to continue
-    echo.
-    goto :pause_exit
+    set "NEED_RESTART=1"
 )
 
-echo  + Python is installed.
+if "!PYTHON_CMD!" neq "" (
+    echo  + Python is installed.
+) else (
+    echo  + Python installed.
+)
 echo.
 
 :: ============================================================
@@ -171,23 +166,28 @@ if %errorlevel% neq 0 (
         echo  X Installation failed. You may need to install FFmpeg manually from ffmpeg.org
         goto :pause_exit
     )
+    set "NEED_RESTART=1"
+    echo  + FFmpeg installed.
+) else (
+    echo  + FFmpeg is installed.
+)
+echo.
+
+if "!NEED_RESTART!"=="1" (
     echo.
     echo  ============================================
     echo    IMPORTANT - Please read this
     echo  ============================================
     echo.
-    echo  FFmpeg was just installed. Windows needs to refresh its settings
-    echo  before we can continue.
+    echo  Python and/or FFmpeg were just installed. Windows needs to refresh
+    echo  its settings before we can continue with the rest of the setup.
     echo.
     echo  Please:
     echo    1. CLOSE this window completely
-    echo    2. Double-click install.bat again to continue
+    echo    2. Double-click install.bat again to finish
     echo.
     goto :pause_exit
 )
-
-echo  + FFmpeg is installed.
-echo.
 
 :: ============================================================
 :: Step 4: Install Python dependencies
