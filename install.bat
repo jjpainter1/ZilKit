@@ -184,7 +184,7 @@ if "!NEED_RESTART!"=="1" (
     echo.
     echo  Please:
     echo    1. CLOSE this window completely
-    echo    2. Double-click install.bat again to finish
+    echo    2. Run install.bat as Administrator again to finish
     echo.
     goto :pause_exit
 )
