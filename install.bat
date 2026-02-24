@@ -220,9 +220,44 @@ if %errorlevel% neq 0 (
 )
 
 :: ============================================================
+:: Step 6: Windows 11 classic context menu (ZilKit requires it)
+:: ============================================================
+set "WIN_BUILD=0"
+for /f "tokens=3" %%a in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v CurrentBuild 2^>nul ^| findstr CurrentBuild') do set "WIN_BUILD=%%a"
+if !WIN_BUILD! GEQ 22000 (
+    :: Windows 11 - check if classic context menu is enabled
+    reg query "HKCU\SOFTWARE\CLASSES\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" >nul 2>&1
+    if !errorlevel! neq 0 (
+        echo.
+        echo  [Windows 11] ZilKit requires the classic right-click context menu.
+        echo  Windows 11's new menu hides third-party entries like ZilKit.
+        echo.
+        set "SWITCH_MENU="
+        set /p "SWITCH_MENU=  Switch to classic context menu now? (y/n, default y): "
+        if /i "!SWITCH_MENU!"=="" set "SWITCH_MENU=y"
+        if /i "!SWITCH_MENU!"=="y" (
+            echo.
+            echo  Applying classic context menu...
+            reg add "HKCU\SOFTWARE\CLASSES\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /ve /f >nul 2>&1
+            reg add "HKCU\Software\Classes\CLSID\{d93ed569-3b3e-4bff-8355-3c44f6a52bb5}\InprocServer32" /f /ve >nul 2>&1
+            echo  Restarting Windows Explorer...
+            taskkill /f /im explorer.exe >nul 2>&1
+            start explorer.exe
+            echo  + Classic context menu enabled.
+        ) else (
+            echo.
+            echo  You can switch later by running these commands as Administrator:
+            echo    reg add "HKCU\SOFTWARE\CLASSES\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /ve /f
+            echo    reg add "HKCU\Software\Classes\CLSID\{d93ed569-3b3e-4bff-8355-3c44f6a52bb5}\InprocServer32" /f /ve
+            echo    taskkill /f /im explorer.exe ^& start explorer.exe
+        )
+    )
+)
+echo.
+
+:: ============================================================
 :: Success
 :: ============================================================
-echo.
 echo  ============================================
 echo    Installation complete!
 echo  ============================================
@@ -233,9 +268,8 @@ echo    - Right-click in any folder
 echo    - Select "ZilKit" from the menu
 echo    - Choose FFmpeg, Shortcuts, or Utilities
 echo.
-echo  Note: You may need to restart Windows Explorer for the
-echo  menu to appear. In Task Manager, find "Windows Explorer",
-echo  right-click it, and select "Restart".
+echo  Note: If you don't see ZilKit, restart Windows Explorer
+echo  (Task Manager -^> find "Windows Explorer" -^> Right-click -^> Restart).
 echo.
 goto :pause_exit
 
