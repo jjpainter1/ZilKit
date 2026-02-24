@@ -60,7 +60,7 @@ set "NEED_RESTART=0"
 :: ============================================================
 :: Step 1: Verify WinGet is installed and up to date
 :: ============================================================
-echo  [Step 1/5] Checking WinGet...
+echo  [Step 1/6] Checking WinGet...
 echo.
 
 winget --version >nul 2>&1
@@ -94,7 +94,7 @@ echo.
 :: ============================================================
 :: Step 2: Check Python
 :: ============================================================
-echo  [Step 2/5] Checking Python...
+echo  [Step 2/6] Checking Python...
 echo.
 
 set "PYTHON_CMD="
@@ -142,7 +142,7 @@ echo.
 :: ============================================================
 :: Step 3: Check FFmpeg
 :: ============================================================
-echo  [Step 3/5] Checking FFmpeg...
+echo  [Step 3/6] Checking FFmpeg...
 echo.
 
 ffmpeg -version >nul 2>&1
@@ -192,7 +192,19 @@ if "!NEED_RESTART!"=="1" (
 :: ============================================================
 :: Step 4: Install Python dependencies
 :: ============================================================
-echo  [Step 4/5] Installing ZilKit dependencies...
+echo  [Step 4/6] Installing ZilKit dependencies...
+echo.
+echo  ZilKit requires the following Python packages:
+echo    - pyseq, typer, rich, openimageio, pywin32
+echo.
+set "INSTALL_DEPS="
+set /p "INSTALL_DEPS=  Install all pip dependencies now? (y/n, default y): "
+if /i "!INSTALL_DEPS!"=="" set "INSTALL_DEPS=y"
+if /i "!INSTALL_DEPS!" neq "y" (
+    echo.
+    echo  Dependencies are required. Run install.bat again when ready.
+    goto :pause_exit
+)
 echo.
 
 !PYTHON_CMD! -m pip install -r requirements.txt
@@ -207,28 +219,16 @@ echo  + Dependencies installed.
 echo.
 
 :: ============================================================
-:: Step 5: Register ZilKit in context menu
+:: Step 5: Windows 11 classic context menu (do BEFORE registering ZilKit)
 :: ============================================================
-echo  [Step 5/5] Adding ZilKit to your right-click menu...
+echo  [Step 5/6] Checking Windows 11 context menu...
 echo.
-
-!PYTHON_CMD! src\scripts\install.py
-if %errorlevel% neq 0 (
-    echo.
-    echo  X Failed to register context menu.
-    goto :pause_exit
-)
-
-:: ============================================================
-:: Step 6: Windows 11 classic context menu (ZilKit requires it)
-:: ============================================================
 set "WIN_BUILD=0"
 for /f "tokens=3" %%a in ('reg query "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion" /v CurrentBuild 2^>nul ^| findstr CurrentBuild') do set "WIN_BUILD=%%a"
 if !WIN_BUILD! GEQ 22000 (
     :: Windows 11 - check if classic context menu is enabled
     reg query "HKCU\SOFTWARE\CLASSES\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" >nul 2>&1
     if !errorlevel! neq 0 (
-        echo.
         echo  [Windows 11] ZilKit requires the classic right-click context menu.
         echo  Windows 11's new menu hides third-party entries like ZilKit.
         echo.
@@ -251,9 +251,26 @@ if !WIN_BUILD! GEQ 22000 (
             echo    reg add "HKCU\Software\Classes\CLSID\{d93ed569-3b3e-4bff-8355-3c44f6a52bb5}\InprocServer32" /f /ve
             echo    taskkill /f /im explorer.exe ^& start explorer.exe
         )
+    ) else (
+        echo  + Classic context menu already enabled.
     )
+) else (
+    echo  + Windows 10 - no context menu change needed.
 )
 echo.
+
+:: ============================================================
+:: Step 6: Register ZilKit in context menu
+:: ============================================================
+echo  [Step 6/6] Adding ZilKit to your right-click menu...
+echo.
+
+!PYTHON_CMD! src\scripts\install.py
+if %errorlevel% neq 0 (
+    echo.
+    echo  X Failed to register context menu.
+    goto :pause_exit
+)
 
 :: ============================================================
 :: Success
